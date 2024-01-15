@@ -1,7 +1,12 @@
 import 'package:defacto/enums/app_pages.dart';
 import 'package:defacto/models/global_state.dart';
-import 'package:defacto/models/profile.dart';
+import 'package:defacto/models/profile/profile.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+final globalStateProvider =
+StateNotifierProvider<GlobalStateNotifier, GlobalState>((ref) {
+  return GlobalStateNotifier();
+});
 
 class GlobalStateNotifier extends StateNotifier<GlobalState> {
   GlobalStateNotifier()
@@ -24,6 +29,11 @@ class GlobalStateNotifier extends StateNotifier<GlobalState> {
     state = state.copyWith(activeProfileId: activeProfileId);
   }
 
+  void deleteProfileWithId(String profileId) {
+    state.availableProfiles.removeWhere((profile) => profile.id == profileId);
+    state = state.copyWith(availableProfiles: state.availableProfiles);
+  }
+
   void setAvailableProfiles(List<Profile> availableProfiles) {
     state = state.copyWith(availableProfiles: availableProfiles);
   }
@@ -42,8 +52,3 @@ class GlobalStateNotifier extends StateNotifier<GlobalState> {
     // Implement logic to periodically update traffic for the active profile
   }
 }
-
-final globalStateProvider =
-    StateNotifierProvider<GlobalStateNotifier, GlobalState>((ref) {
-  return GlobalStateNotifier();
-});

@@ -1,4 +1,4 @@
-import 'package:defacto/enums/editable_dialog_types.dart';
+import 'package:defacto/enums/form_editable_types.dart';
 import 'package:defacto/ui/widgets/main_drawer.dart';
 import 'package:defacto/ui/widgets/form/group.dart';
 import 'package:defacto/ui/widgets/form/input_editable.dart';
@@ -6,6 +6,10 @@ import 'package:defacto/ui/widgets/form/switch_editable.dart';
 import 'package:flutter/material.dart';
 
 import 'configuration.dart';
+
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:defacto/config/theme_provider.dart';
+import 'package:defacto/config/styles.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
@@ -27,6 +31,16 @@ class _SettingsScreenState extends State<SettingsScreen> {
   };
   String ipv6Route = 'Disable';
 
+  List<Color> colorsList = [
+    Colors.white,
+    Colors.black,
+    Colors.redAccent,
+    Colors.green,
+    Colors.blue,
+    Colors.amber,
+    Colors.orange,
+  ];
+
   @override
   Widget build(BuildContext context) {
     return PopScope(
@@ -46,12 +60,13 @@ class _SettingsScreenState extends State<SettingsScreen> {
       child: Scaffold(
         key: _scaffoldKey,
         appBar: AppBar(
-          iconTheme: IconThemeData(color: Colors.white),
-          backgroundColor: Theme.of(context).colorScheme.primary,
-          title: const Text("Settings", style: TextStyle(color: Colors.white)),
-        ),
+            iconTheme: IconThemeData(color: Colors.white),
+            backgroundColor: Theme.of(context).colorScheme.background,
+            title: const Text(
+              "Settings",
+            )),
         drawer: const MainDrawer(),
-        backgroundColor: Colors.white,
+        backgroundColor: Theme.of(context).colorScheme.background,
         body: ListView(
           children: <Widget>[
             GroupForm(
@@ -75,14 +90,14 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   icon: Icons.edit,
                   title: 'Resolve Destination',
                   defaultValue: 'If the destination address is a domain',
-                  dialogType: EditableDialogType.string,
+                  dialogType: FormEditableTypes.string,
                   onChanged: (value) => setState(() {}),
                 ),
                 InputEditable(
                   icon: Icons.edit,
                   title: 'IPv6 Route',
                   defaultValue: ipv6Route,
-                  dialogType: EditableDialogType.string,
+                  dialogType: FormEditableTypes.string,
                   onChanged: (value) => setState(() => ipv6Route = value),
                 ),
               ],
@@ -103,7 +118,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   title: 'Rule Assets Provider',
                   hint: 'Chocolate4U/Iran-sing-box-rules',
                   defaultValue: 'If the destination address is a domain',
-                  dialogType: EditableDialogType.string,
+                  dialogType: FormEditableTypes.string,
                   onChanged: (value) => setState(() {}),
                 ),
                 SwitchEditable(
@@ -117,10 +132,41 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   icon: Icons.edit,
                   title: 'Protocol Selection',
                   defaultValue: 'Automatic',
-                  dialogType: EditableDialogType.string,
+                  dialogType: FormEditableTypes.string,
                   onChanged: (value) => setState(() => ipv6Route = value),
                 ),
               ],
+            ),
+            SizedBox(
+              width: MediaQuery.of(context).size.width,
+              height: 50,
+              child: ListView.builder(
+                physics: const PageScrollPhysics(),
+                scrollDirection: Axis.horizontal,
+                itemCount: colorsList.length,
+                shrinkWrap: true,
+                itemBuilder: ((context, index) {
+                  return Consumer(
+                    builder:
+                        (BuildContext context, WidgetRef ref, Widget? child) {
+                      final themeNotifer = ref.watch(themeProvider);
+                      return GestureDetector(
+                        child: Container(
+                          height: 100,
+                          width: 90,
+                          decoration: BoxDecoration(
+                              border: Border.all(color: Colors.black, width: 2),
+                              color: colorsList[index],
+                              shape: BoxShape.circle),
+                        ),
+                        onTap: () {
+                          themeNotifer.setTheme(index);
+                        },
+                      );
+                    },
+                  );
+                }),
+              ),
             ),
             // ... Add more GroupForm widgets for other settings groups ...
           ],

@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:defacto/enums/editable_dialog_types.dart';
+import 'package:defacto/enums/form_editable_types.dart';
 import 'package:flutter/services.dart';
 
 class EditableDialog extends StatefulWidget {
   final String? title;
-  final EditableDialogType type;
+  final FormEditableTypes type;
   final String? currentValue;
   final String placeholder;
   final Function(String) onSuccess;
@@ -34,7 +34,7 @@ class _EditableDialogState extends State<EditableDialog> {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: Text(widget.title ?? 'Edit Value'),
+      shape: const RoundedRectangleBorder(borderRadius: BorderRadius.zero),
       content: _buildDialogContent(),
       actions: <Widget>[
         TextButton(
@@ -49,58 +49,79 @@ class _EditableDialogState extends State<EditableDialog> {
           },
         ),
       ],
+      contentPadding: const EdgeInsets.symmetric(horizontal: 16),
+      buttonPadding: EdgeInsets.zero,
+      actionsPadding: const EdgeInsets.all(0),
     );
   }
 
   Widget _buildDialogContent() {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: <Widget>[
+        if (widget.title != null) const SizedBox(height: 20),
+        if (widget.title != null) Text(widget.title!, style: Theme.of(context).textTheme.bodyLarge),
+        _buildDialogForm(),
+      ],
+    );
+  }
+
+  Widget _buildDialogForm() {
     switch (widget.type) {
-      case EditableDialogType.string:
+      case FormEditableTypes.string:
         return TextField(
           controller: _controller,
           decoration: InputDecoration(hintText: widget.placeholder),
         );
-      case EditableDialogType.number:
+      case FormEditableTypes.number:
         return TextField(
           controller: _controller,
           decoration: InputDecoration(hintText: widget.placeholder),
           keyboardType: const TextInputType.numberWithOptions(decimal: true),
-          inputFormatters: [FilteringTextInputFormatter.allow(RegExp(r'[0-9.]'))],
+          inputFormatters: [
+            FilteringTextInputFormatter.allow(RegExp(r'[0-9.]'))
+          ],
         );
-      case EditableDialogType.multiline:
+      case FormEditableTypes.multiline:
         return TextField(
           controller: _controller,
           decoration: InputDecoration(hintText: widget.placeholder),
           keyboardType: TextInputType.multiline,
           maxLines: null,
         );
-      case EditableDialogType.numberRange:
+      case FormEditableTypes.numberRange:
         return TextField(
           controller: _controller,
           decoration: InputDecoration(hintText: widget.placeholder),
           keyboardType: TextInputType.number,
-          inputFormatters: [FilteringTextInputFormatter.allow(RegExp(r'[0-9,-]'))],
+          inputFormatters: [
+            FilteringTextInputFormatter.allow(RegExp(r'[0-9,-]'))
+          ],
         );
-      case EditableDialogType.ip:
+      case FormEditableTypes.ip:
         return TextField(
           controller: _controller,
           decoration: InputDecoration(hintText: widget.placeholder),
           keyboardType: TextInputType.text,
-          inputFormatters: [FilteringTextInputFormatter.allow(RegExp(r'([0-9a-fA-F:.])'))],
+          inputFormatters: [
+            FilteringTextInputFormatter.allow(RegExp(r'([0-9a-fA-F:.])'))
+          ],
         );
-      case EditableDialogType.port:
+      case FormEditableTypes.port:
         return TextField(
           controller: _controller,
           decoration: InputDecoration(hintText: widget.placeholder),
           keyboardType: TextInputType.number,
           inputFormatters: [FilteringTextInputFormatter.digitsOnly],
         );
-      case EditableDialogType.domain:
+      case FormEditableTypes.domain:
         return TextField(
           controller: _controller,
           decoration: InputDecoration(hintText: widget.placeholder),
           keyboardType: TextInputType.url,
         );
-      case EditableDialogType.url:
+      case FormEditableTypes.url:
         return TextField(
           controller: _controller,
           decoration: InputDecoration(hintText: widget.placeholder),

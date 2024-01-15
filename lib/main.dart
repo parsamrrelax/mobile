@@ -1,12 +1,12 @@
 import 'dart:io';
 
-import 'package:defacto/ui/main_screens/LoadingScreen.dart';
-import 'package:defacto/ui/main_screens/about.dart';
-import 'package:defacto/ui/main_screens/configuration.dart';
-import 'package:defacto/ui/main_screens/logs.dart';
-import 'package:defacto/ui/main_screens/routing.dart';
-import 'package:defacto/ui/main_screens/settings.dart';
-import 'package:defacto/ui/skeleton/skeleton_screen.dart';
+import 'package:defacto/ui/screens/main/Loading_screen.dart';
+import 'package:defacto/ui/screens/main/about.dart';
+import 'package:defacto/ui/screens/main/configuration.dart';
+import 'package:defacto/ui/screens/main/logs.dart';
+import 'package:defacto/ui/screens/main/routing.dart';
+import 'package:defacto/ui/screens/main/settings.dart';
+import 'package:defacto/ui/screens/skeleton/skeleton_screen.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_displaymode/flutter_displaymode.dart';
@@ -14,8 +14,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hive_flutter/adapters.dart';
 import 'package:path_provider/path_provider.dart';
 
-import 'config/theme.dart';
-import 'states/theme_mode_state.dart';
+import 'config/theme_provider.dart';
+import 'config/styles.dart';
 
 /// Try using const constructors as much as possible!
 
@@ -40,29 +40,27 @@ void main() async {
         ],
         fallbackLocale: const Locale('en'),
         useFallbackTranslations: true,
-        child: const MyApp(),
+        child: MyApp(),
       ),
     ),
   );
 }
 
 class MyApp extends ConsumerWidget {
-  const MyApp({super.key});
+  MyApp({super.key});
+  Styles styles = Styles();
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final ThemeModeState currentTheme = ref.watch(themeProvider);
-
+    final themeNotifer = ref.watch(themeProvider);
     return MaterialApp(
       title: 'Bepass',
-      theme: lightTheme,
-      darkTheme: darkTheme,
-      themeMode: currentTheme.themeMode,
       localizationsDelegates: context.localizationDelegates,
       supportedLocales: context.supportedLocales,
       locale: context.locale,
       debugShowCheckedModeBanner: false,
       initialRoute: '/loading',
+      theme: styles.themeData(themeNotifer.themeIndex, context),
       routes: {
         '/loading': (context) => const LoadingScreen(),
         '/': (context) => const SkeletonScreen(),

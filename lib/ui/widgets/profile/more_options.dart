@@ -1,4 +1,4 @@
-import 'package:defacto/ui/other_screens/new_profile.dart';
+import 'package:defacto/ui/screens/other/new_profile.dart';
 import 'package:flutter/material.dart';
 
 class MoreOptions extends StatelessWidget {
@@ -18,15 +18,7 @@ class MoreOptions extends StatelessWidget {
               padding: EdgeInsets.all(8.0),
               child: Icon(Icons.more_vert),
             ),
-            onSelected: (value) {
-              if (value == "profile.dart") {
-                // add desired output
-              } else if (value == "settings") {
-                // add desired output
-              } else if (value == "logout") {
-                // add desired output
-              }
-            },
+            onSelected: (value) {},
             itemBuilder: (BuildContext context) => <PopupMenuEntry>[
               const PopupMenuItem(
                 value: "clearAllStats",
@@ -77,7 +69,7 @@ class MoreOptions extends StatelessWidget {
                 onTap: () {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => NewProfilePage()),
+                    MaterialPageRoute(builder: (context) => const NewProfilePage()),
                   );
                 },
                 child: const Row(
